@@ -23,7 +23,6 @@ public class StatementPrinter {
      * @return the formatted statement
      * @throws RuntimeException if one of the play types is not known
      */
-    @SuppressWarnings("checkstyle:LineLength")
     public String statement() {
         int totalAmount = 0;
         int volumeCredits = 0;
@@ -41,7 +40,8 @@ public class StatementPrinter {
                 case "tragedy":
                     thisAmount = Constants.TRAGEDY_BASE_AMOUNT;
                     if (p.audience > Constants.TRAGEDY_AUDIENCE_THRESHOLD) {
-                        thisAmount += Constants.TRAGEDY_OVER_BASE_CAPACITY_PER_PERSON * (p.audience - Constants.TRAGEDY_AUDIENCE_THRESHOLD);
+                        thisAmount += Constants.TRAGEDY_OVER_BASE_CAPACITY_PER_PERSON
+                                * (p.audience - Constants.TRAGEDY_AUDIENCE_THRESHOLD);
                         // Choosing to suppress checkStyle for the above line of code.
                     }
                     break;

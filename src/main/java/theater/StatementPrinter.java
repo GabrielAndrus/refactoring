@@ -25,27 +25,33 @@ public class StatementPrinter {
      */
     public String statement() {
         int totalAmount = 0;
-        int thisAmount = 0;
-        int volumeCredits = 0;
         final StringBuilder result =
                 new StringBuilder("Statement for " + invoice.getCustomer() + System.lineSeparator());
         // made final according to checkStyle
 
+        int thisAmount = 0;
         for (Performance p : invoice.getPerformances()) {
-
             thisAmount = getAmount(p, getPlay(p));
-
-            // add volume credits
-            volumeCredits = getVolumeCredits(p, volumeCredits);
-
-            // print line for this order
-            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).name,
-                    NumberFormat.getCurrencyInstance(Locale.US).format(thisAmount / Constants.PERCENT_FACTOR), p.audience));
             totalAmount += thisAmount;
         }
+
+        for (Performance p : invoice.getPerformances()) {
+            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).name,
+                    usd(thisAmount), p.audience));
+
+        }
+
         result.append(String.format("Amount owed is %s%n", usd(totalAmount)));
-        result.append(String.format("You earned %s credits%n", volumeCredits));
+        result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
+    }
+
+    private int getTotalVolumeCredits() {
+        int result = 0;
+        for (Performance p : invoice.getPerformances()) {
+            result = getVolumeCredits(p, result);
+        }
+        return result;
     }
 
     private static String usd(int totalAmount) {
@@ -74,7 +80,7 @@ public class StatementPrinter {
                 if (performance.audience > Constants.TRAGEDY_AUDIENCE_THRESHOLD) {
                     result += Constants.TRAGEDY_OVER_BASE_CAPACITY_PER_PERSON
                             * (performance.audience - Constants.TRAGEDY_AUDIENCE_THRESHOLD);
-                    // Choosing to suppress checkStyle for the above line of code.
+                    // (no longer) Choosing to suppress checkStyle for the above line of code.
                 }
                 break;
             case "comedy":
